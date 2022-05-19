@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Cadastro de Clientes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/wingcss/0.1.8/wing.min.css"/>
+    <style>
+        input[type=number] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            -webkit-transition: .5s;
+            transition: .5s;
+            outline: 0;
+            font-family: 'Open Sans', serif;
+        }
+    </style>
+    <!-- Load AngularJS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+      var app = angular.module("ClienteManagement", []);
+
+      //Controller Part
+      app.controller("ClienteManagementController", function ($scope, $http) {
+
+        //Initialize page with default data which is blank in this example
+        $scope.clientes = [];
+
+        $scope.form = {
+          id: -1,
+          nome: ""
+        };
+
+        //Now load the data from server
+        _refreshPageData();
+
+        //HTTP POST/PUT methods for add/edit clientes
+        $scope.update = function () {
+          var method = "";
+          var url = "";
+          var data = {};
+          if ($scope.form.id == -1) {
+            //Id is absent so add clientes - POST operation
+            method = "POST";
+            url = '/clientes';
+            data.nome = $scope.form.nome;
+          } else {
+            //If Id is present, it's edit operation - PUT operation
+            method = "PUT";
+            url = '/clientes/' + $scope.form.id;
+            data.nome = $scope.form.nome;
+          }
+
+          $http({
+            method: method,
+            url: url,
+            data: angular.toJson(data),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(_success, _error);
+        };
+
+        //HTTP DELETE- delete cliente by id
+        $scope.remove = function (cliente) {
+          $http({
+            method: 'DELETE',
+            url: '/clientes/' + cliente.id
+          }).then(_success, _error);
+        };
+
+        //In case of edit clientes, populate form with cliente data
+        $scope.edit = function (cliente) {
+          $scope.form.nome = cliente.nome;
+          $scope.form.id = cliente.id;
+        };
+
+          /* Private Methods */
+        //HTTP GET- get all clientes collection
+        function _refreshPageData() {
+          $http({
+            method: 'GET',
+            url: '/clientes'
+          }).then(function successCallback(response) {
+            $scope.clientes = response.data;
+          }, function errorCallback(response) {
+            console.log(response.statusText);
+          });
+        }
+
+        function _success(response) {
+          _refreshPageData();
+          _clearForm()
+        }
+
+        function _error(response) {
+          alert(response.data.message || response.statusText);
+        }
+
+        //Clear the form
+        function _clearForm() {
+          $scope.form.nome = "";
+          $scope.form.id = -1;
+        }
+      });
+    </script>
+</head>
+<body ng-app="ClienteManagement" ng-controller="ClienteManagementController">
+
+<div class="container">
+    <h1>Cadastro de Cliente</h1>
+    <p>Este é um projeto de simplificado de um CRUD para cadastro de clientes baseado em REST,
+       com um pequeno front-end baseado em Angular que poderá ser executado a partir do browser.
+    </p>
+    <p>Por debaixo to capô nós temos:
+        <ul>
+            <li>RESTEasy para expôr os REST endpoints</li>
+            <li>Hibernate ORM para execução das operações do CRUD na base de dados</li>
+            <li>Um base de dados H2 em memória</li>
+            <li>ArC, como ferramenta de injeção de dependência</li>
+            <li>Agroal como pool de conexões</li>
+            <li>Cache baseado em Infinispan</li>
+            <li>Narayana Transaction Manager</li>
+        </ul>
+    </p>
+
+    <h3>Adicionar/Editar um cliente</h3>
+    <form ng-submit="update()">
+        <div class="row">
+            <div class="col-6"><input type="text" placeholder="Nome" ng-model="form.nome" size="60"/></div>
+        </div>
+        <input type="submit" value="Salvar"/>
+    </form>
+
+    <h3>Lista de Clientes</h3>
+    <div class="row">
+        <div class="col-2">Nome</div>
+    </div>
+    <div class="row" ng-repeat="cliente in clientes">
+        <div class="col-2">{{ cliente.nome }}</div>
+        <div class="col-8"><a ng-click="edit( cliente )" class="btn">Editar</a> <a ng-click="remove( cliente )" class="btn">Remover</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
