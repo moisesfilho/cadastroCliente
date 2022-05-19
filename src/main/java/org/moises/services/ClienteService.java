@@ -1,92 +1,96 @@
 package org.moises.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.moises.dto.ClienteDTO;
 import org.moises.models.Cliente;
 import org.moises.repositories.ClienteRepository;
 
 import io.netty.util.internal.StringUtil;
 
-@Path("clientes")
 @ApplicationScoped
-@Produces("application/json")
-@Consumes("application/json")
 public class ClienteService {
 
     @Inject
-    ClienteRepository repository;
+    ClienteRepository clienteRepository;
 
-    @GET
-    public List<Cliente> get() {
-        return repository.listAll();
+    ObjectMapper mapper;
+
+    public ClienteService() {
+        mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    @GET
-    @Path("{id}")
-    public Cliente getSingle(Integer id) {
-        Cliente entity = repository.getById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Cliente com id " + id + " não existe.", 404);
+    public List<ClienteDTO> listAll() {
+        List<Cliente> entities = clienteRepository.listAll();
+
+        List<ClienteDTO> listaClienteDTO = new ArrayList<>();
+
+        for (Cliente entity : entities) {
+            listaClienteDTO.add(mapper.convertValue(entity, ClienteDTO.class));
         }
-        return entity;
+
+        return listaClienteDTO;
     }
 
-    @POST
+    public ClienteDTO getById(Integer id) {
+        Cliente entity = clienteRepository.getById(id);
+        if (entity == null)
+            return null;
+        return mapper.convertValue(entity, ClienteDTO.class);
+    }
+
     @Transactional
-    public Response create(Cliente cliente) {
-        if (cliente.getId() != null) {
-            throw new WebApplicationException("Id inválido para a requisição.", 422);
+    public ClienteDTO create(ClienteDTO clienteDTO) {
+        if (clienteDTO.getId() != null) {
+            clienteDTO.addErro("Id inválido para a requisição.");
+            return clienteDTO;
         }
 
-        if (StringUtil.isNullOrEmpty(cliente.getNome())) {
-            throw new WebApplicationException("Nome do cliente é um campo obrigatório.", 422);
+        if (StringUtil.isNullOrEmpty(clienteDTO.getNome())) {
+            clienteDTO.addErro("Nome do cliente é um campo obrigatório.");
+            return clienteDTO;
         }
 
-        repository.persist(cliente);
-        return Response.ok(cliente).status(201).build();
+        Cliente entity = mapper.convertValue(clienteDTO, Cliente.class);
+
+        clienteRepository.persist(entity);
+
+        return mapper.convertValue(entity, ClienteDTO.class);
     }
 
-    @PUT
-    @Path("{id}")
     @Transactional
-    public Cliente update(Integer id, Cliente cliente) {
-        if (StringUtil.isNullOrEmpty(cliente.getNome())) {
-            throw new WebApplicationException("Nome do cliente é um campo obrigatório.", 422);
+    public ClienteDTO update(Integer id, ClienteDTO clienteDTO) {
+        if (StringUtil.isNullOrEmpty(clienteDTO.getNome())) {
+            clienteDTO.addErro("Nome do cliente é um campo obrigatório.");
+            return clienteDTO;
         }
 
-        Cliente entity = repository.getById(id);
+        Cliente entity = clienteRepository.getById(id);
 
         if (entity == null) {
-            throw new WebApplicationException("Cliente com id " + id + " não existe.", 404);
+            clienteDTO.addErro("Cliente com id " + id + " não existe.");
+            return clienteDTO;
         }
 
-        entity.setNome(cliente.getNome());
-
-        return entity;
+        entity.setNome(clienteDTO.getNome());
+        return mapper.convertValue(entity, ClienteDTO.class);
     }
 
-    @DELETE
-    @Path("{id}")
     @Transactional
-    public Response delete(Integer id) {
-        Cliente entity = repository.getById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Cliente com id " + id + " não existe", 404);
-        }
-        repository.remove(entity);
-        return Response.status(204).build();
+    public ClienteDTO delete(Integer id) {
+        Cliente entity = clienteRepository.getById(id);
+        if (entity == null)
+            return null;
+        clienteRepository.remove(entity);
+        return mapper.convertValue(entity, ClienteDTO.class);
     }
 }
