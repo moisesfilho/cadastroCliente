@@ -94,11 +94,11 @@ Realize o build do projeto
 Ao realizar o build do projeto a extensão configurada no MAVEN irá gerar uma imagem
 que será criada com o nome:
 
-> <user>/cadastro-cliente:1.0.0-SNAPSHOT
+> usuario/cadastro-cliente:1.0.0-SNAPSHOT
 
 Para executar a imagem, execute o seguinte comando:
 
-> docker run -p 127.0.0.1:8081:8080/tcp <user>/cadastro-cliente:1.0.0-SNAPSHOT
+> docker run -p 127.0.0.1:8081:8080/tcp usuario/cadastro-cliente:1.0.0-SNAPSHOT
 
 OBS: o nome da imagem precisará ser ajustado de acordo com o nome que foi criado
 
