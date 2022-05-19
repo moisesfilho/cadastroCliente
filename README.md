@@ -47,12 +47,11 @@ codificação ao vivo. Para experimentar isso:
 Neste modo, você pode fazer alterações no código e aplicar as alterações imediatamente, bastando atualizar seu navegador.
 
 O Hot reload funciona mesmo ao modificar suas entidades JPA.
-Tente! Até mesmo o esquema do banco de dados será atualizado em tempo real.
+Até mesmo o esquema do banco de dados será atualizado em tempo real.
 
 ### Executando Quarkus no modo JVM
 
-Quando terminar de experimentar no modo de desenvolvedor, você pode executar o aplicativo como um
-arquivo jar convencional.
+Para executar o aplicativo como um arquivo jar convencional.
 
 Primeiro faça o build:
 
