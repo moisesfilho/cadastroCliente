@@ -100,7 +100,7 @@ Para executar a imagem, execute o seguinte comando:
 
 > docker run -p 127.0.0.1:8081:8080/tcp usuario/cadastro-cliente:1.0.0-SNAPSHOT
 
-OBS: o nome da imagem precisará ser ajustado de acordo com o nome que foi criado
+OBS: o nome da imagem precisará ser ajustado de acordo com o nome do usuário local, que é parte do nome da imagem
 
 Navegue para:
 
