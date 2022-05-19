@@ -10,6 +10,8 @@ public class ClienteDTO {
 
   private String nome;
 
+  private String cpf;
+
   private List<String> erros;
 
   public ClienteDTO() {
@@ -35,6 +37,14 @@ public class ClienteDTO {
     this.nome = name;
   }
 
+  public String getCpf() {
+    return cpf;
+  }
+
+  public void setCpf(String cpf) {
+    this.cpf = cpf;
+  }
+
   public List<String> getErros() {
     if (this.erros == null) {
       this.erros = new ArrayList<>();
@@ -55,7 +65,7 @@ public class ClienteDTO {
 
   public String getErrosString() {
     String errosString = "";
-    
+
     if (this.erros == null || this.erros.isEmpty())
       return errosString;
 

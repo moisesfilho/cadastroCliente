@@ -21,6 +21,9 @@ public class Cliente {
     @Column(length = 40, unique = true)
     private String nome;
 
+    @Column(length = 11, unique = true)
+    private String cpf;
+
     public Cliente() {
     }
 
@@ -44,4 +47,11 @@ public class Cliente {
         this.nome = name;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

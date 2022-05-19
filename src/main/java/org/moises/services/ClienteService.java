@@ -62,6 +62,11 @@ public class ClienteService {
             return clienteDTO;
         }
 
+        if (StringUtil.isNullOrEmpty(clienteDTO.getCpf())) {
+            clienteDTO.addErro("CPF é um campo obrigatório.");
+            return clienteDTO;
+        }
+
         Cliente entity = mapper.convertValue(clienteDTO, Cliente.class);
 
         clienteRepository.persist(entity);
@@ -76,6 +81,11 @@ public class ClienteService {
             return clienteDTO;
         }
 
+        if (StringUtil.isNullOrEmpty(clienteDTO.getCpf())) {
+            clienteDTO.addErro("CPF é um campo obrigatório.");
+            return clienteDTO;
+        }
+
         Cliente entity = clienteRepository.getById(id);
 
         if (entity == null) {
@@ -84,6 +94,7 @@ public class ClienteService {
         }
 
         entity.setNome(clienteDTO.getNome());
+        entity.setCpf(clienteDTO.getCpf());
         return mapper.convertValue(entity, ClienteDTO.class);
     }
 
