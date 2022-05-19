@@ -29,9 +29,11 @@ public class ClienteService {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    public List<ClienteDTO> listAll() {
-        List<Cliente> entities = clienteRepository.listAll();
-
+    public List<ClienteDTO> listPaginated(Integer pageNumber, Integer pageSize) {
+        List<Cliente> entities;
+        
+        entities = clienteRepository.listPaginated(pageNumber, pageSize);
+        
         List<ClienteDTO> listaClienteDTO = new ArrayList<>();
 
         for (Cliente entity : entities) {
