@@ -24,7 +24,7 @@
     <script type="text/javascript">
       var app = angular.module("ClienteManagement", []);
 
-      //Controller Part
+      //Definição do Controller
       app.controller("ClienteManagementController", function ($scope, $http) {
 
         //Initialize page with default data which is blank in this example
@@ -35,21 +35,21 @@
           nome: ""
         };
 
-        //Now load the data from server
+        //Carregando dados do Servidor
         _refreshPageData();
 
-        //HTTP POST/PUT methods for add/edit clientes
+        //HTTP POST/PUT método para adicionar ou editar clientes
         $scope.update = function () {
           var method = "";
           var url = "";
           var data = {};
           if ($scope.form.id == -1) {
-            //Id is absent so add clientes - POST operation
+            //Se Id não está presente, realizar um post, para criar entidade
             method = "POST";
             url = '/clientes';
             data.nome = $scope.form.nome;
           } else {
-            //If Id is present, it's edit operation - PUT operation
+            //Id Id está presente, realiza um put, para atualizar entidade
             method = "PUT";
             url = '/clientes/' + $scope.form.id;
             data.nome = $scope.form.nome;
@@ -65,7 +65,7 @@
           }).then(_success, _error);
         };
 
-        //HTTP DELETE- delete cliente by id
+        //Deletando cliente por id
         $scope.remove = function (cliente) {
           $http({
             method: 'DELETE',
@@ -73,14 +73,14 @@
           }).then(_success, _error);
         };
 
-        //In case of edit clientes, populate form with cliente data
+        //Populando cliente para edição
         $scope.edit = function (cliente) {
           $scope.form.nome = cliente.nome;
           $scope.form.id = cliente.id;
         };
 
-          /* Private Methods */
-        //HTTP GET- get all clientes collection
+        /* Private Methods */
+        //Obtendo todos os clientes
         function _refreshPageData() {
           $http({
             method: 'GET',
@@ -98,10 +98,10 @@
         }
 
         function _error(response) {
-          alert(response.data.message || response.statusText);
+          alert(response.data.error || response.statusText);
         }
 
-        //Clear the form
+        //Limpando Formulário
         function _clearForm() {
           $scope.form.nome = "";
           $scope.form.id = -1;
